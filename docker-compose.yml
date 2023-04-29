@@ -2,15 +2,34 @@ version:  '3'
 services:
 
   signalserver:
-    build: ./build.sh
-    container_name: signal-server
+    build: .
     restart: always
     ports: 
-      - "8080:8080"
+      - 8080:8080
+    networks:
+      - client-side
 
   redis:
     image: redis:latest
     container_name: signal-server_redis
     restart: always
     ports:
-      - "6379:6379"
+      - 6379:6379
+
+
+    db:
+      image: postgres:latest
+      container_name: signal_postgres_db
+      restart: always
+      environment:
+        - POSTGRES_PASSWORD=signalsecretpassword
+      networks:
+        - server-side
+      ports:
+        - 5432:5432
+      volumes:
+        - db-data:/var/lib/postgresql/data
+
+networks:
+  client-side: {}
+  server-side: {}
