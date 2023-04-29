@@ -1,3 +1,5 @@
+# (C) by Alisa Shilkova, 2023
+
 FROM openjdk:latest as deps
 
 WORKDIR /opt/app
