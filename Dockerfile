@@ -1,5 +1,7 @@
 # (C) by Alisa Shilkova, 2023
 
+# Кэш (для быстроты перезапуска сборки)
+
 FROM openjdk:latest as deps
 
 WORKDIR /opt/app
@@ -14,7 +16,9 @@ COPY integration-tests/pom.xml integration-tests/pom.xml
 COPY service/pom.xml service/pom.xml
 COPY websocket-resources/pom.xml   websocket-resources/pom.xml
 
-RUN ./mvnw -B -e -C org.apache.maven.plugins:maven-dependency-plugin:3.5.0:go-offline
+RUN ./mvnw -B -e org.apache.maven.plugins:maven-dependency-plugin:3.5.0:go-offline
+
+# Сборка проекта
 
 FROM openjdk:latest as builder
 
@@ -28,7 +32,9 @@ COPY integration-tests/src/ /opt/app/integration-tests/src/
 COPY service/src/ /opt/app/service/src/
 COPY websocket-resources/src/ /opt/app/websocket-resources/src/
 
-RUN ./mvnw -B package -DskipTests=true
+RUN ./mvnw -B -e package -DskipTests=true
+
+# Копирование .jar файла приложения, полученного в ходе сборки, в /opt/app контейнера
 
 FROM openjdk:latest
 WORKDIR /opt/app
@@ -36,5 +42,5 @@ COPY --from=builder /opt/app/service/target/TextSecureServer-0.0.0-NOT_A_GIT_REP
 
 EXPOSE 8080
 
-ENTRYPOINT [ "sleep", "1000" ]
-# ENTRYPOINT [ "executable" ] [ "java", "-jar", "/opt/app/TextSecureServer-0.0.0-NOT_A_GIT_REPOSITORY.jar" ]
+# ENTRYPOINT [ "sleep", "1000" ]
+ENTRYPOINT [ "executable" ] [ "java", "-jar", "/opt/app/TextSecureServer-0.0.0-NOT_A_GIT_REPOSITORY.jar" ]
