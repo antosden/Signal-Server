@@ -34,5 +34,5 @@ COPY --from=builder /opt/app/service/target/TextSecureServer-0.0.0-NOT_A_GIT_REP
 
 EXPOSE 8080
 
-# ENTRYPOINT [ "sleep", "1000" ]
-ENTRYPOINT [ "executable" ] [ "java", "-jar", "TextSecureServer-0.0.0-NOT_A_GIT_REPOSITORY.jar" ]
+ENTRYPOINT [ "sleep", "1000" ]
+# ENTRYPOINT [ "executable" ] [ "java", "-jar", "/opt/app/TextSecureServer-0.0.0-NOT_A_GIT_REPOSITORY.jar" ]
