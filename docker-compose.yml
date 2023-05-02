@@ -16,19 +16,33 @@ services:
     ports:
       - 6379:6379
 
+  postgresql_accountdb:
+    image: postgres:latest
+    container_name: signal-server_accountdb
+    restart: always
+    volumes:
+      - ./postgresql/accountdb.sql:/docker-entrypoint-initdb.d/accountdb.sql
+      - ./postgresql/accountdb:/var/lib/postgresql/data/
+    ports:
+      - 5421:5432
+    environment:
+      - POSTGRES_USER=signal-server
+      - POSTGRES_PASSWORD=signalsecretpassword
+      - POSTGRES_DB=accountdb
 
-    db:
-      image: postgres:latest
-      container_name: signal_postgres_db
-      restart: always
-      environment:
-        - POSTGRES_PASSWORD=signalsecretpassword
-      networks:
-        - server-side
-      ports:
-        - 5432:5432
-      volumes:
-        - db-data:/var/lib/postgresql/data
+  postgresql_messagedb:
+    image: postgres:latest
+    container_name: signal-server_messagedb
+    restart: always
+    volumes:
+      - ./postgresql/messagedb.sql:/docker-entrypoint-initdb.d/messagedb.sql
+      - ./postgresql/messagedb:/var/lib/postgresql/data/
+    ports:
+      - 5422:5432
+    environment:
+      - POSTGRES_USER=signal-server
+      - POSTGRES_PASSWORD=signalsecretpassword
+      - POSTGRES_DB=messagedb
 
 networks:
   client-side: {}
